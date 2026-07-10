@@ -145,7 +145,7 @@
 <div class="topbar">
   <div class="topbar-inner">
     <h1>主板吸筹选股结果图表</h1>
-    <span class="scan-time">扫描时间: 2026-07-10 19:00</span>
+    <span class="scan-time">扫描时间: 2026-07-10 19:05</span>
     <div class="search-box">
       <input type="text" id="searchInput" placeholder="搜索代码/名称/行业/概念..." oninput="onFilterChange()">
     </div>
@@ -517,9 +517,10 @@ function buildCards() {
     if (currentFilter === 'favorites') {
       if (!favorites.includes(code)) return;
     }
-    // 形态标签页筛选（数据第32位为 types 列表）
-    if (currentType === 'type1' && (s[32] || []).indexOf('type1') < 0) return;
-    if (currentType === 'type2' && (s[32] || []).indexOf('type2') < 0) return;
+    // 形态标签页筛选（types 为数据数组最后一位）
+    const _types = s[s.length - 1] || [];
+    if (currentType === 'type1' && _types.indexOf('type1') < 0) return;
+    if (currentType === 'type2' && _types.indexOf('type2') < 0) return;
     if (currentDim === 'all') {
       // 全部维度：可按状态筛选
       if (currentStatus.all !== '全部') {
