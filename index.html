@@ -155,7 +155,7 @@
 <div class="topbar">
   <div class="topbar-inner">
     <h1>主板吸筹选股结果图表</h1>
-    <span class="scan-time">扫描时间: 2026-07-14 16:49</span>
+    <span class="scan-time">扫描时间: 2026-07-14 19:02</span>
     <div class="search-box">
       <input type="text" id="searchInput" placeholder="搜索代码/名称/行业/概念..." oninput="onFilterChange()">
     </div>
@@ -169,7 +169,7 @@
       <button class="filter-btn" data-filter="type2">横盘震荡</button>
       <button class="filter-btn" data-filter="idc">IDC/算力</button>
       <button class="filter-btn" data-filter="switch">交换机</button>
-      <button class="filter-btn" data-filter="breakout" style="border:1px solid #e65100;color:#e65100;border-radius:16px;background:#fff;cursor:pointer;padding:5px 12px;font-size:12px;">窜出来</button>
+      <button class="filter-btn" data-filter="goldcross" style="border:1px solid #e65100;color:#e65100;border-radius:16px;background:#fff;cursor:pointer;padding:5px 12px;font-size:12px;">今日金叉</button>
       <button class="filter-btn" data-filter="favorites" style="border:1px solid #1565c0;color:#1565c0;border-radius:16px;background:#fff;cursor:pointer;padding:5px 12px;font-size:12px;">★ 自选</button>
     </div>
     <div class="sub-filter-bar" id="subFilterBar"></div>
@@ -473,6 +473,17 @@ function renderStock(container, idx) {
   chartInstances.push(kChart, vChart, fundChart, var7Chart);
 }
 
+function isGoldenCrossToday(maA, maB) {
+  // maA/maB: 均线序列(前 n-1 根为 null)，判定最新交易日是否发生上穿金叉
+  const idxs = [];
+  for (let i = 0; i < maA.length; i++) {
+    if (maA[i] != null && maB[i] != null) idxs.push(i);
+  }
+  if (idxs.length < 2) return false;
+  const i2 = idxs[idxs.length - 1], i1 = idxs[idxs.length - 2];
+  return (maA[i2] > maB[i2]) && (maA[i1] <= maB[i1]);
+}
+
 function buildCards() {
   destroyAllCharts();
   const container = document.getElementById('stockContainer');
@@ -517,8 +528,8 @@ function buildCards() {
       if (!(themes || []).includes('idc')) return;
     } else if (currentFilter === 'switch') {
       if (!(themes || []).includes('switch')) return;
-    } else if (currentFilter === 'breakout') {
-      if (!maCross) return;
+    } else if (currentFilter === 'goldcross') {
+      if (!(isGoldenCrossToday(ma5, ma10) || isGoldenCrossToday(ma10, ma20))) return;
     } else if (currentDim === 'sector') {
       if (currentSector !== '全部板块' && sector !== currentSector) return;
     } else if (currentDim === 'time') {
